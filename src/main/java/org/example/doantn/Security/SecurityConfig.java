@@ -28,21 +28,31 @@ import java.util.List;
 
 public class SecurityConfig {
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtFilter jwtFilter) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Thêm dòng này!
-                .csrf(AbstractHttpConfigurer::disable)
+                // 1. Kích hoạt CORS và sử dụng CorsConfigurationSource đã định nghĩa
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                // 2. Tắt CSRF nếu bạn đang xây dựng REST API không dùng session
+                // Đối với các ứng dụng RESTful API sử dụng token (JWT), việc tắt CSRF thường là an toàn.
+                .csrf(csrf -> csrf.disable())
+                // 3. Cấu hình ủy quyền cho các request HTTP
                 .authorizeHttpRequests(auth -> auth
-                                .requestMatchers("/api/auth/login").permitAll()
-                                .anyRequest().authenticated()
-                        // .anyRequest().permitAll()
-
-                )
-                .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class); // Thêm JwtFilter
+                        // Cho phép tất cả các request OPTIONS (đặc biệt quan trọng cho preflight CORS)
+                        .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
+                        // Cho phép truy cập công khai đến endpoint đăng nhập và các endpoint khác không cần xác thực
+                        // Hãy điều chỉnh các đường dẫn này cho phù hợp với ứng dụng của bạn
+                        .requestMatchers("/api/auth/**", "/public/**").permitAll()
+                        // Yêu cầu xác thực cho tất cả các request khác
+                        .anyRequest().authenticated()
+                );
+        // 4. Các cấu hình Spring Security khác của bạn có thể đặt ở đây
+        // Ví dụ: .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+        // .exceptionHandling(...)
+        // .authenticationProvider(...)
 
         return http.build();
     }
+
 
 
 
