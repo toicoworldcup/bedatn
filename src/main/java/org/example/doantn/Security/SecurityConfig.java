@@ -19,6 +19,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Configuration
@@ -66,14 +67,16 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin("http://localhost:4200"); // Địa chỉ frontend
-        configuration.addAllowedMethod("*"); // Cho phép tất cả phương thức HTTP
-        configuration.addAllowedHeader("*"); // Cho phép tất cả header
-        configuration.setAllowCredentials(true); // Cho phép cookies
+        // ĐẢM BẢO CHÍNH XÁC URL CỦA FRONTEND CỦA BẠN TRÊN VERCEL
+        configuration.setAllowedOrigins(List.of("https://fedatn-r6fd.vercel.app"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(Arrays.asList("*")); // Cho phép tất cả các headers
+        configuration.setAllowCredentials(true); // Quan trọng nếu bạn dùng cookies/headers xác thực
+        configuration.setMaxAge(3600L); // Thời gian sống của preflight request
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration); // Áp dụng cho tất cả endpoint
-
+        source.registerCorsConfiguration("/**", configuration); // Áp dụng cấu hình cho tất cả các đường dẫn
         return source;
     }
+
 }
