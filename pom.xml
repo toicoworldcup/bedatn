@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -18,6 +19,10 @@
 
     <properties>
         <java.version>17</java.version> <!-- Hoặc 11 nếu bạn dùng Java 11 -->
+        <!-- BẮT ĐẦU CÁC THAY ĐỔI VỀ ENCODING -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <!-- KẾT THÚC CÁC THAY ĐỔI VỀ ENCODING -->
     </properties>
 
     <dependencies>
@@ -114,8 +119,6 @@
             <artifactId>jakarta.validation-api</artifactId>
         </dependency>
 
-
-
         <!-- Caching -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -172,6 +175,16 @@
                     <target>${java.version}</target>
                 </configuration>
             </plugin>
+            <!-- BẮT ĐẦU CÁC THAY ĐỔI VỀ ENCODING -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.3.1</version> <!-- Đảm bảo đúng phiên bản plugin trong log lỗi của bạn -->
+                <configuration>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
+            <!-- KẾT THÚC CÁC THAY ĐỔI VỀ ENCODING -->
         </plugins>
     </build>
 </project>
